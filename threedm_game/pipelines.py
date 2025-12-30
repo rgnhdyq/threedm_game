@@ -19,8 +19,7 @@ class ThreedmGamePipeline:
         fieldnames = [
             'chinese_name', 'english_name', 'developer', 'publisher',
             'release_date', 'game_type', 'platform', 'language',
-            'tags', 'score', 'rating_count', 'game_url', 'image_url',
-            'crawl_year', 'crawl_month', 'page_number', 'has_special_page'
+            'tags', 'score', 'game_url', 'image_url', 'platform_type'
         ]
         self.csv_writer = csv.DictWriter(self.csv_file, fieldnames=fieldnames)
         self.csv_writer.writeheader()
@@ -38,13 +37,13 @@ class ThreedmGamePipeline:
         if not item.get('chinese_name') and not item.get('english_name'):
             raise DropItem(f"游戏名称缺失: {item}")
 
-        # 添加处理时间戳
-        item['processed_time'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        # 将item转换为字典
+        item_dict = dict(item)
 
         # 保存到JSON
         if not self.first_item:
             self.json_file.write(',\n')
-        json.dump(dict(item), self.json_file, ensure_ascii=False, indent=2)
+        json.dump(item_dict, self.json_file, ensure_ascii=False, indent=2)
         self.first_item = False
 
         # 保存到CSV
